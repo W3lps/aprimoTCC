@@ -27,9 +27,16 @@ app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/', systemRoutes);
 
+app.use((error, req, res) => {
+  console.log(error);
+  const status = error.statusCode || 500;
+  const message = error.message;
+  res.status(status).json({ message: message, data: data });
+});
+
 mongoose
   .connect(MONGODB_URL)
   .then(result => {
-    app.listen(3000);
+    app.listen(3030);
   })
   .catch(err => console.log(err));
