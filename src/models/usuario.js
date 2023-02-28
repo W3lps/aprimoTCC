@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+const errorHandler = require('../helpers/errorHandler');
+const checkStatusCode = require('../helpers/checkStatusCode');
 
 const Schema = mongoose.Schema;
 
@@ -27,10 +29,10 @@ const userSchema = new Schema({
     type: String,
     // required: true,
   },
-  // grupo: {
-  //     type: Schema.Types.ObjectId,
-  //     ref: 'Grupo',
-  // },
+  grupo: {
+    type: Schema.Types.ObjectId,
+    ref: 'Grupo',
+  },
 });
 
 module.exports = mongoose.model('Usuario', userSchema);

@@ -4,7 +4,7 @@ const bodyParser = require('body-parser');
 
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
-const systemRoutes = require('./routes/system');
+const tarefasRoutes = require('./routes/tarefas');
 
 const app = express();
 
@@ -25,18 +25,19 @@ app.use((req, res, next) => {
 
 app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
-app.use('/', systemRoutes);
+app.use('/', tarefasRoutes);
 
-app.use((error, req, res) => {
+app.use((error, _, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).json({ message: message, data: data });
+  // res.status(status)
+  res.json({ message: message, data: error });
 });
 
 mongoose
   .connect(MONGODB_URL)
   .then(result => {
-    app.listen(3030);
+    app.listen(3000);
   })
   .catch(err => console.log(err));
