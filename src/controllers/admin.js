@@ -33,3 +33,14 @@ exports.criarGrupo = async (req, res, next) => {
     checkStatusCode(err, next);
   }
 };
+
+exports.verGrupos = async (req, res, next) => {
+  checkAuthLevel(req.userTipo);
+  try {
+    const user = await User.findById(req.userId);
+    const grupos = await Grupo.find({ curso: user.curso }).populate('membros');
+    res.status(200).json({ grupos: grupos });
+  } catch (err) {
+    checkStatusCode(err, next);
+  }
+};

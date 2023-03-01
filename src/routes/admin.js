@@ -19,4 +19,6 @@ router.put(
   adminController.criarGrupo
 );
 
+router.get('/ver-grupos', isAuth, adminController.verGrupos);
+
 module.exports = router;

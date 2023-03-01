@@ -21,7 +21,7 @@ const grupoSchema = new Schema({
   membros: [
     {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Usuario',
     },
   ],
 });
