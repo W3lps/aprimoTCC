@@ -1,4 +1,3 @@
-const { validationResult } = require('express-validator/check');
 const excelJS = require('exceljs');
 
 const Grupo = require('../models/grupo');
@@ -7,15 +6,30 @@ const Tarefa = require('../models/tarefa');
 
 const checkStatusCode = require('../helpers/checkStatusCode');
 const errorHandler = require('../helpers/errorHandler');
+const inputValidator = require('../helpers/inputValidator');
 
-const checkAuthLevel = async function (usertipo) {
-  if (usertipo !== 'professor') errorHandler(401, 'Não autorizado');
+const checkAuthLevel = async usertipo =>
+  usertipo !== 'professor' ? errorHandler(401, 'Usuário não autorizado') : '';
+
+exports.criarGrupoPage = async (req, res, next) => {
+  checkAuthLevel(req.userTipo);
+  inputValidator({ req: req });
+  //envia os alunos para o professor selecionar no front
+  try {
+    const user = await User.find(req.userId);
+    const alunos = await User.find({
+      curso: user.curso,
+      turma: req.body.turma,
+    });
+    res.status(200).json({ alunos: alunos });
+  } catch (err) {
+    checkStatusCode(err, next);
+  }
 };
 
 exports.criarGrupo = async (req, res, next) => {
   checkAuthLevel(req.userTipo);
-  if (!validationResult(req).isEmpty())
-    errorHandler(422, 'Dados incorretos! Reveja os inputs');
+  inputValidator({ req: req });
   if (req.body.membros.length < 3)
     errorHandler(422, 'O grupo é pequeno demais');
   membrosId = req.body.membros;

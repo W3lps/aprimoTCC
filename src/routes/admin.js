@@ -6,6 +6,13 @@ const router = express.Router();
 const adminController = require('../controllers/admin');
 const isAuth = require('../helpers/is-auth');
 
+router.post(
+  '/adicionar-grupo',
+  isAuth,
+  [body('turma').not().isEmpty()],
+  adminController.criarGrupoPage
+);
+
 router.put(
   '/adicionar-grupo',
   isAuth,

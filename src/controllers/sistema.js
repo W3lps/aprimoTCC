@@ -1,14 +1,13 @@
 const path = require('path');
 const fs = require('fs');
 
-const { validationResult } = require('express-validator/check');
-
 const Tarefa = require('../models/tarefa');
 const User = require('../models/usuario');
 const Grupo = require('../models/grupo');
 
 const checkSatusCode = require('../helpers/checkStatusCode');
 const errorHandler = require('../helpers/errorHandler');
+const inputValidator = require('../helpers/inputValidator');
 
 const checkAluno = userType =>
   userType === 'aluno' ? '' : errorHandler(401, 'Usuário não autorizado');
@@ -33,8 +32,7 @@ exports.verTarefas = async (req, res, next) => {
 };
 
 exports.criarTarefa = async (req, res, next) => {
-  if (!validationResult(req).isEmpty())
-    errorHandler(422, 'Dados incorretos! Reveja as informações inseridas');
+  inputValidator({ req: req });
   try {
     const user = await User.findById(req.userId);
     let groupId = [];
@@ -64,8 +62,7 @@ exports.criarTarefa = async (req, res, next) => {
 };
 
 exports.finalizarTarefa = async (req, res, next) => {
-  if (!validationResult(req).isEmpty())
-    errorHandler(422, 'Dados incorretos! Reveja as informações inseridas');
+  inputValidator({ req: req });
   try {
     const user = await User.findById(req.userId);
     const tarefa = await Tarefa.findById(req.params.tafId);
@@ -84,8 +81,7 @@ exports.finalizarTarefa = async (req, res, next) => {
 };
 
 exports.editarTarefa = async (req, res, next) => {
-  if (!validationResult(req).isEmpty())
-    errorHandler(422, 'Dados incorretos! Reveja as informações inseridas');
+  inputValidator({ req: req });
   try {
     const tarefa = await Tarefa.findById(req.params.tafId);
     if (!tarefa) errorHandler(404, 'Não foi possível localizar a tarefa!');
@@ -131,9 +127,8 @@ exports.excluirTarefa = async (req, res, next) => {
 };
 
 exports.atualizarGrupo = async (req, res, next) => {
-  if (!validationResult(req).isEmpty())
-    errorHandler(422, 'Dados incorretos! Reveja as informações inseridas');
   checkAluno(req.userTipo);
+  inputValidator({ req: req });
   try {
     const grupo = await Grupo.findById(req.params.groupId);
     if (!grupo) errorHandler(404, 'Não foi possível localizar o grupo!');
