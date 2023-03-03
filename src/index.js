@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const multer = require('multer');
 
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
@@ -8,10 +9,21 @@ const tarefasRoutes = require('./routes/sistema');
 
 const app = express();
 
+const fileStorage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, '/src/arquivos');
+  },
+  filename: (req, file, cb) => {
+    uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, file.originalname + '-' + uniqueSuffix);
+  },
+});
+
 const MONGODB_URL =
   'mongodb+srv://read_write_only:js2020@aprimotcc.bqgyq0v.mongodb.net/aprimoTCC?retryWrites=true&w=majority';
 
 app.use(bodyParser.json());
+app.use(multer({ storage: fileStorage }).single('arquivo'));
 
 app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -31,7 +43,7 @@ app.use((error, _, res, next) => {
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;
-  res.status(status).res.json({ message: message, data: error });
+  res.status(status).json({ message: message, data: error });
 });
 
 mongoose

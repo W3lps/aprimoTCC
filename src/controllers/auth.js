@@ -33,7 +33,7 @@ exports.login = async (req, res, next) => {
       {
         email: enteredUser.email,
         userId: enteredUser._id,
-        userTipo: enteredUser.tipo.toString(),
+        userTipo: enteredUser.tipo,
       },
       'hashedSecret=WP'
       // { expiresIn: '1h' }

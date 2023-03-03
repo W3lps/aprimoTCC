@@ -19,6 +19,23 @@ router.put(
   sistemaController.criarTarefa
 );
 
+router.put('/finalizar-tarefa/:tafId', isAuth, [
+  body('dificuldade').not().isEmpty(),
+  body('observacoes').trim().isLength({ min: 10 }),
+  sistemaController.finalizarTarefa,
+]);
+
+router.patch('/editar-tarefa/:tafId'),
+  isAuth,
+  [],
+  sistemaController.editarTarefa;
+
+router.delete(
+  '/excluir-tarefa/:tafId',
+  isAuth,
+  sistemaController.excluirTarefa
+);
+
 router.put(
   '/atualizar-grupo/:groupId',
   isAuth,

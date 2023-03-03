@@ -19,6 +19,18 @@ router.put(
   adminController.criarGrupo
 );
 
-router.get('/ver-grupos', isAuth, adminController.verGrupos);
+router.get('/ver-grupos', isAuth, adminController.verGruposPage);
+
+router.get(
+  '/detalhes-grupo/:groupId',
+  isAuth,
+  adminController.verDetalhesGrupoPage
+);
+
+router.get(
+  '/gerar-planilha/:groupId',
+  isAuth,
+  adminController.gerarPlanilhaGrupo
+);
 
 module.exports = router;

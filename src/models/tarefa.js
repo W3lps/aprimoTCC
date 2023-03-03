@@ -35,13 +35,11 @@ const tarefaSchema = new Schema({
   fileUrl: {
     type: String,
   },
-  groupId: [
-    {
-      type: Schema.Types.ObjectId,
-      required: true,
-      ref: 'Grupo',
-    },
-  ],
+  groupId: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    ref: 'Grupo',
+  },
   criadoPor: {
     type: Schema.Types.ObjectId,
     required: true,
