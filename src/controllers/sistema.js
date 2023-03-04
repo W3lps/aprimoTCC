@@ -9,8 +9,9 @@ const checkSatusCode = require('../helpers/checkStatusCode');
 const errorHandler = require('../helpers/errorHandler');
 const inputValidator = require('../helpers/inputValidator');
 
-const checkAluno = userType =>
-  userType === 'aluno' ? '' : errorHandler(401, 'Usuário não autorizado');
+const checkAluno = function (usertipo) {
+  if (usertipo !== 'aluno') return errorHandler(401, 'Usuário não autorizado');
+};
 
 const excluirArquivo = filePath => {
   filePath = path.join(__dirname, '..', filePath);
@@ -80,6 +81,20 @@ exports.finalizarTarefa = async (req, res, next) => {
   }
 };
 
+exports.editarTarefaPage = async (req, res, next) => {
+  try {
+    const tarefa = await Tarefa.findById({ _id: req.params.tafId }).populate(
+      'groupId'
+    );
+    if (!tarefa) errorHandler(404, 'Não foi possível localizar a tarefa');
+    if (tarefa.criadoPor !== req.userId)
+      errorHandler(401, 'Usuário não autorizado');
+    res.status(200).json({ tarefa: tarefa });
+  } catch (err) {
+    checkSatusCode(err, next);
+  }
+};
+
 exports.editarTarefa = async (req, res, next) => {
   inputValidator({ req: req });
   try {
@@ -93,7 +108,7 @@ exports.editarTarefa = async (req, res, next) => {
     if (arquivo !== tarefa.arquivoUrl) excluirArquivo(tarefa.arquivoUrl);
     tarefa.titulo = req.body.novoTitulo;
     tarefa.descricao = req.body.novaDescricao;
-    tarefa.materia = req.body.materia;
+    tarefa.materia = req.body.novaMateria;
     tarefa.arquivoUrl = arquivo;
     await tarefa.save();
     res.status(200).json({ message: 'Tarefa atualizada!' });

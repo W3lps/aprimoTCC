@@ -8,19 +8,24 @@ const checkStatusCode = require('../helpers/checkStatusCode');
 const errorHandler = require('../helpers/errorHandler');
 const inputValidator = require('../helpers/inputValidator');
 
-const checkAuthLevel = async usertipo =>
-  usertipo !== 'professor' ? errorHandler(401, 'Usuário não autorizado') : '';
-
+const checkAuthLevel = function (usertipo) {
+  if (usertipo !== 'professor')
+    return errorHandler(401, 'Usuário não autorizado');
+};
 exports.criarGrupoPage = async (req, res, next) => {
   checkAuthLevel(req.userTipo);
   inputValidator({ req: req });
   //envia os alunos para o professor selecionar no front
   try {
-    const user = await User.find(req.userId);
+    const user = await User.findById(req.userId);
     const alunos = await User.find({
       curso: user.curso,
       turma: req.body.turma,
+      grupo: { $exists: false },
+      tipo: 'aluno',
     });
+    if (!alunos)
+      errorHandler(404, 'Todos os alunos desta turma já possuem um grupo!');
     res.status(200).json({ alunos: alunos });
   } catch (err) {
     checkStatusCode(err, next);
@@ -67,9 +72,11 @@ exports.verGruposPage = async (req, res, next) => {
 exports.verDetalhesGrupoPage = async (req, res, next) => {
   checkAuthLevel(req.userTipo);
   try {
-    const grupo = Grupo.find({ _id: req.params.groupId }).populate('membros');
+    const grupo = await Grupo.findById(req.params.groupId).populate('membros');
     if (!grupo) errorHandler(404, 'Não foi possível localizar o grupo!');
-    const tarefas = Tarefa.find({ groupId: grupo._id }).populate('criadoPor');
+    const tarefas = await Tarefa.find({ groupId: grupo._id }).populate(
+      'criadoPor'
+    );
     res.status(200).json({ grupo: grupo, tarefas: tarefas });
   } catch (err) {
     checkStatusCode(err, next);

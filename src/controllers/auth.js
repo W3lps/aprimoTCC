@@ -5,19 +5,22 @@ const jwt = require('jsonwebtoken');
 const errorHandler = require('../helpers/errorHandler');
 const catchError = require('../helpers/checkStatusCode');
 
-exports.cadastrar = async (req, res) => {
-  const hashedPassword = await bcrypt.hash(req.body.senha, 12);
-  const user = new User({
-    nome: req.body.nome,
-    email: req.body.email,
-    senha: hashedPassword,
-    curso: req.body.curso,
-    turma: req.body.turma,
-    tipo: req.body.tipo,
-  });
-  user.save();
-  res.status(201).json({ message: 'Created', user });
-};
+//o sistema não é suposto a ter cadastro,
+//os alunos são os mesmos do sistema do Senai.
+// a função abaixo serve apenas para testes
+// exports.cadastrar = async (req, res) => {
+//   const hashedPassword = await bcrypt.hash(req.body.senha, 12);
+//   const user = new User({
+//     nome: req.body.nome,
+//     email: req.body.email,
+//     senha: hashedPassword,
+//     curso: req.body.curso,
+//     turma: req.body.turma,
+//     tipo: req.body.tipo,
+//   });
+//   user.save();
+//   res.status(201).json({ message: 'Created', user });
+// };
 
 exports.login = async (req, res, next) => {
   const email = req.body.email;

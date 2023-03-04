@@ -27,7 +27,11 @@ router.put('/finalizar-tarefa/:tafId', isAuth, [
 
 router.patch('/editar-tarefa/:tafId'),
   isAuth,
-  [],
+  [
+    body('novoTitulo').trim().isLength({ min: 3 }),
+    body('novaDescricao').trim().isLength({ min: 10 }),
+    body('novaMateria').not().isEmpty(),
+  ],
   sistemaController.editarTarefa;
 
 router.delete(
