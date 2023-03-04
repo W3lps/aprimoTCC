@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+require('dotenv').config();
 
 const adminRoutes = require('./routes/admin');
 const authRoutes = require('./routes/auth');
@@ -19,8 +20,8 @@ const fileStorage = multer.diskStorage({
   },
 });
 
-const MONGODB_URL =
-  'mongodb+srv://read_write_only:js2020@aprimotcc.bqgyq0v.mongodb.net/aprimoTCC?retryWrites=true&w=majority';
+const PORT = process.env.PORT || 3000;
+const MONGODB_URI = `mongodb+srv://${process.env.USER}:${process.env.PASSWORD}@aprimotcc.bqgyq0v.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`;
 
 app.use(bodyParser.json());
 app.use(multer({ storage: fileStorage }).single('arquivo'));
@@ -47,8 +48,8 @@ app.use((error, _, res, next) => {
 });
 
 mongoose
-  .connect(MONGODB_URL)
+  .connect(MONGODB_URI)
   .then(result => {
-    app.listen(3000);
+    app.listen(PORT);
   })
   .catch(err => console.log(err));
