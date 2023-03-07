@@ -40,11 +40,12 @@ app.use('/admin', adminRoutes);
 app.use('/auth', authRoutes);
 app.use('/', tarefasRoutes);
 
-app.use((error, _, res, next) => {
-  console.log(error);
-  const status = error.statusCode || 500;
-  const message = error.message;
-  res.status(status).json({ message: message, data: error });
+app.use((err, _, res, next) => {
+  console.log(err);
+  const status = err.statusCode || 500;
+  const message = err.message;
+  const data = err.data;
+  res.status(status).json({ message: message, data: data });
 });
 
 mongoose
